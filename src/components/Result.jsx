@@ -62,7 +62,8 @@ const Result = ({ accuracy, wpm, wpmData, onRestart }) => {
               dataKey="prevWpm"
               stroke="gray"
               strokeWidth={3}
-              fill="rgba(128,128,128,0.2)"
+              fill="rgba(255,255,255,0)"
+              animationDuration={1500}
               dot={false}
             />
 
