@@ -156,13 +156,13 @@ const Setting = ({ onUpdateSettings }) => {
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={handleCancel}
-                className="px-4 py-1 border border-[var(--primary-color)] text-[var(--primary-color)] rounded hover:bg-[var(--primary-color)] transition"
+                className="px-4 py-1 border border-[var(--primary-color)] text-[var(--primary-color)] rounded transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleApply}
-                className="px-4 py-1 bg-[var(--primary-color)] text-white rounded hover:bg-opacity-90 transition"
+                className="px-4 py-1 bg-[var(--primary-color)] text-white rounded hover:bg-opacity-90 transition cursor-pointer"
               >
                 Apply
               </button>
