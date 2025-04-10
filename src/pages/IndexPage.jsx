@@ -1,14 +1,24 @@
+// IndexPage.jsx
 import { useState } from "react";
 import Header from "../components/Header";
-import GameArea from "../components/GameArea";
+// import GameArea from "../components/GameArea";
 import Result from "../components/Result";
 import { ThemeProvider } from "../components/ThemeProvider";
-import Logo from "../assets/ambile-logo.png";
+import GameArea from "../components/GameArea2";
+import VirtualKeyboard from "../components/VirtualKeyboard";
+
+const DEFAULT_SETTINGS = {
+  timer: 60,
+  textType: "simple",
+  inputType: "over",
+  fontSize: "text-2xl",
+  theme: "dark",
+};
 
 const IndexPage = () => {
-  
-
   const [result, setResult] = useState(null);
+  // Lift settings state to this parent component
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
 
   const handleFinish = ({ accuracy = 0, wpm = 0, wpmData }) => {
     setResult({ accuracy, wpm, wpmData });
@@ -21,34 +31,29 @@ const IndexPage = () => {
 
   return (
     <ThemeProvider>
-      <Header />
+      {/* Pass settings state and its setter to Header */}
+      <Header settings={settings} onUpdateSettings={setSettings} />
 
       {/* Logo & Title Section */}
-      <div className="flex flex-col md:flex-row items-center justify-center w-full mx-auto p-6">
-        {/* <img
-          src={Logo}
-          className="h-18 md:h-24 lg:h-32 p-2 object-contain"
-          alt="Logo"
-        /> */}
+      <div className="flex flex-col md:flex-row items-center justify-center w-full mx-auto p-6 my-4">
         <div className="text-center md:text-left">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--text-primary-color)]">
             سنڌي ٽائپنگ ٽيسٽ
           </h1>
-          {/* <p className="text-sm sm:text-md md:text-lg">AMBILE پاران طاقتور</p> */}
         </div>
       </div>
 
-      {/* Game Area & Settings */}
-      <div className="max-w-5xl flex flex-col mx-auto text-white px-4">
+      {/* Game Area & Results */}
+      <div className="max-w-7xl flex flex-col mx-auto text-white px-4">
         {result === null ? (
           <>
-            <GameArea onFinish={handleFinish} />
-            {/* <Result
-            accuracy={100.00}
-            wpm={ 200.00}
-            
-            onRestart={handleRestart}
-          /> */}
+            {/* <GameArea settings={settings} onFinish={handleFinish} /> */}
+            <GameArea settings={settings} onFinish={handleFinish} />
+            {settings.showKeyboard && (
+              <div className="mt-4 mb-4">
+                <VirtualKeyboard settings={settings} />
+              </div>
+            )}
           </>
         ) : (
           <Result
@@ -59,8 +64,6 @@ const IndexPage = () => {
           />
         )}
       </div>
-        <div className="max-w-5xl mx-auto">
-        </div>
     </ThemeProvider>
   );
 };
