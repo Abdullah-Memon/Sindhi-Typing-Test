@@ -67,6 +67,7 @@ const Setting = ({ onUpdateSettings }) => {
         setPendingSettings(parsed);
       } catch (err) {
         setPendingSettings(DEFAULT_SETTINGS);
+        
       }
     } else {
       setPendingSettings(DEFAULT_SETTINGS);
