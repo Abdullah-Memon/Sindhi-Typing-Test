@@ -6,6 +6,7 @@ import Result from "../components/Result";
 import { ThemeProvider } from "../components/ThemeProvider";
 import GameArea from "../components/GameArea2";
 import VirtualKeyboard from "../components/VirtualKeyboard";
+import Prerequisite from "../components/Prerequisite";
 
 const DEFAULT_SETTINGS = {
   timer: 60,
@@ -48,12 +49,9 @@ const IndexPage = () => {
         {result === null ? (
           <>
             {/* <GameArea settings={settings} onFinish={handleFinish} /> */}
-            <GameArea settings={settings} onFinish={handleFinish} />
-            {settings.showKeyboard && (
-              <div className="mt-4 mb-4">
-                <VirtualKeyboard settings={settings} />
-              </div>
-            )}
+            {/* <Prerequisite> */}
+              <GameArea settings={settings} onFinish={handleFinish} />
+            {/* </Prerequisite> */}
           </>
         ) : (
           <Result

@@ -3,8 +3,14 @@ import { keyMappings } from "./data";
 
 const VirtualKeyboard = ({ onKeyPress }) => {
   const [shiftActive, setShiftActive] = useState(false);
+  const [altActive, setAltActive] = useState(false);
   const [activeKey, setActiveKey] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Function to record and log key presses
+  // const recordKeyPress = (key, source) => {
+  //   console.log(`Key pressed: "${key}" via ${source}`);
+  // };
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -20,58 +26,103 @@ const VirtualKeyboard = ({ onKeyPress }) => {
     return mapping;
   }, []);
 
-  const handleKeyPress = (key) => {
+  const handleVirtualKeyPress = (key) => {
     const normalizedKey = key.toLowerCase();
-    setActiveKey(key);
 
-    switch (normalizedKey) {
-      case "shift":
-      case "⇧":
-      case "⬆":
+    if (isMobile) {
+      // Mobile: Toggle Shift and Alt
+      if (["shift", "⇧", "⬆"].includes(normalizedKey)) {
+        setShiftActive((prev) => !prev);
+        return;
+      }
+      if (["alt", "⎇"].includes(normalizedKey)) {
+        setAltActive((prev) => !prev);
+        return;
+      }
+    } else {
+      // Desktop: Modifier states are toggled temporarily for mouse clicks
+      if (["shift", "⇧", "⬆"].includes(normalizedKey)) {
         setShiftActive(true);
         return;
+      }
+      if (["alt", "⎇"].includes(normalizedKey)) {
+        setAltActive(true);
+        return;
+      }
+    }
+
+    // Construct the key identifier based on modifiers
+    let keyIdentifier = normalizedKey;
+    if (shiftActive && altActive) {
+      keyIdentifier = `shift + alt + ${normalizedKey}`;
+    } else if (shiftActive) {
+      keyIdentifier = `shift + ${normalizedKey}`;
+    } else if (altActive) {
+      keyIdentifier = `alt + ${normalizedKey}`;
+    }
+
+    // Map virtual key to event object for GameArea
+    let eventKey;
+    switch (normalizedKey) {
       case "backspace":
       case "⌫":
-        onKeyPress("backspace");
-        return;
+        eventKey = "Backspace";
+        break;
       case "enter":
       case "⏎":
       case "↩":
-        onKeyPress("\n");
-        return;
+        eventKey = "Enter";
+        break;
       case "space":
       case "␣":
-        onKeyPress(" ");
-        return;
+        eventKey = " ";
+        break;
       case "tab":
       case "↹":
-        onKeyPress("\t");
-        return;
+        eventKey = "Tab";
+        break;
       default:
+        eventKey = key;
         break;
     }
 
-    const keyIdentifier = shiftActive
-      ? `shift + ${normalizedKey}`
-      : normalizedKey;
-    const mappedChar =
-      reverseKeyMapping[keyIdentifier] ||
-      reverseKeyMapping[normalizedKey] ||
-      key;
-    onKeyPress(mappedChar);
+    const event = {
+      key: eventKey,
+      shiftKey: shiftActive,
+      altKey: altActive,
+      preventDefault: () => {},
+      repeat: false,
+      keyIdentifier,
+    };
+    onKeyPress(event);
+  };
+
+  const handleKeyPress = (key) => {
+    setActiveKey(key);
+    // recordKeyPress(
+    //   shiftActive ? `shift + ${key}` : altActive ? `alt + ${key}` : key,
+    //   isMobile ? "touch" : "mouse"
+    // );
+    handleVirtualKeyPress(key);
   };
 
   const handleKeyRelease = (key) => {
     setActiveKey(null);
-    if (["shift", "⇧", "⬆"].includes(key.toLowerCase())) {
-      setShiftActive(false);
+    const normalizedKey = key.toLowerCase();
+    if (!isMobile) {
+      if (["shift", "⇧", "⬆"].includes(normalizedKey)) {
+        setShiftActive(false);
+      }
+      if (["alt", "⎇"].includes(normalizedKey)) {
+        setAltActive(false);
+      }
     }
   };
 
   const getDisplayChar = (key) => {
     const specialKeys = {
       shift: "⇧",
-      alt: "alt",
+      alt: "⎇",
       backspace: "⌫",
       enter: "⏎",
       tab: "↹",
@@ -83,75 +134,80 @@ const VirtualKeyboard = ({ onKeyPress }) => {
     };
 
     if (specialKeys[key.toLowerCase()]) return specialKeys[key.toLowerCase()];
-    const identifier = shiftActive ? `shift + ${key}` : key;
+    let identifier = key.toLowerCase();
+    if (shiftActive && altActive) {
+      identifier = `shift + alt + ${key}`;
+    } else if (shiftActive) {
+      identifier = `shift + ${key}`;
+    } else if (altActive) {
+      identifier = `alt + ${key}`;
+    }
     return reverseKeyMapping[identifier.toLowerCase()] || key;
   };
 
   // Styles
-  const baseKeyClasses = `rounded flex justify-center items-center shadow select-none transition-all duration-100 ${
-    isMobile ? "text-xs px-1 py-0.5" : "text-sm px-2 py-1"
+  const baseKeyClasses = `rounded flex justify-center items-center shadow select-none transition-all duration-150 ${
+    isMobile ? "text-xs p-1 min-h-[2rem]" : "text-sm p-2 min-h-[2.5rem]"
   }`;
-  const specialKeyStyle = "bg-[var(--primary-color)] w-max text-white font-semibold";
-  const defaultKeyStyle = "bg-white text-gray-900 hover:bg-gray-200";
-  const pressedKeyStyle = "ring-2 ring-[var(--primary-color)] scale-95";
-  const rowClass = `flex ${isMobile ? "mb-1" : "mb-2"}`;
+  const specialKeyStyle = `bg-[var(--primary-color)] text-white font-semibold ${shiftActive && 'bg-white text-[var(--primary-color)]'}`;
+  const defaultKeyStyle = "bg-white text-gray-900 hover    -gray-200";
+  const pressedKeyStyle = "shadow-md scale-95";
+  const toggledKeyStyle = "bg-[var(--primary-color)] text-white";
+  const rowClass = (rowIndex) =>
+    `grid grid-cols-13 m-0.5 w-full max-w-3xl ${
+      isMobile ? "gap-0.5" : "gap-1"
+    } ${rowIndex === keyboardLayout.length - 1 ? "" : "justify-center"}`;
+  
 
-  // Unified keyboard layout (corrected to match QWERTY)
+  // Keyboard layout (corrected)
   const keyboardLayout = [
-    ["`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=",],
-    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "[", "]", "\\"],
-    ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";", "'"],
-    [ "z", "x", "c", "v", "b", "n", "m", ",", ".", "/",  "⌫"],
-    ["⇧","space","alt"],
+    ["=", "-", "0", "9", "8", "7", "6", "5", "4", "3", "2", "1", "`"],
+    ["\\", "]", "[", "p", "o", "i", "u", "y", "t", "r", "e", "w", "q"],
+    ["'", ";", "l", "k", "j", "h", "g", "f", "d", "s", "a", "⇧"],
+    ["⌫", "/", ".", ",", "m", "n", "b", "v", "c", "x", "z","⎇"],
+    ["space"],
   ];
 
-  // Calculate key widths accounting for margins
-  const getKeyWidth = (key, row) => {
-    const totalKeys = row.length;
-    const marginPerKey = isMobile ? 1 : 2; // Total horizontal margin (0.5rem * 2 or 1rem * 2)
-    const totalMargin = marginPerKey * (totalKeys - 1);
-
-    if (key === "space" || key === "␣") {
-      const spacePercentage = isMobile ? 30 : 40;
-      return `calc(${spacePercentage}% - ${
-        totalMargin * (spacePercentage / 100)
-      }px)`;
+  // Define column spans for special keys
+  const getColumnSpan = (key) => {
+    switch (key) {
+      case "space":
+      case "␣":
+        return "span 13";
+      case "⇧":
+      case "shift":
+      case "⬆":
+        return "span 2";
+      case "⎇":
+      case "alt":
+        return "span 1";
+      case "⌫":
+      case "backspace":
+        return "span 2";
+      default:
+        return "span 1";
     }
-
-    const regularKeysCount = row.filter(
-      (k) => k !== "space" && k !== "␣"
-    ).length;
-    const remainingPercentage =
-      72 -
-      (row.includes("space") || row.includes("␣") ? (isMobile ? 30 : 40) : 0);
-    return `calc(${remainingPercentage / regularKeysCount}% - ${
-      (totalMargin * (remainingPercentage / 100)) / regularKeysCount
-    }px)`;
   };
 
   return (
-    <div
-      className={`w-full flex flex-col items-center mx-auto mt-4 bg-gray-100 py-4 rounded-lg shadow-md overflow-hidden`}
-    >
+    <div className="absolute bottom-0 right-0 left-0 p-4 w-dvw flex flex-col items-center mx-auto mt-4 bg-gray-100 py-4 rounded-lg shadow-md">
       {keyboardLayout.map((row, rowIndex) => (
-        <div key={rowIndex} className={rowClass}>
+        <div
+          key={rowIndex}
+          className={rowClass(rowIndex)}
+        >
           {row.map((key, keyIndex) => {
-            const isSpecial = [
-              "⇧",
-              "⎇",
-              "⌫",
-              "⏎",
-              "↹",
-              "⇪",
-              "␣",
-            ].includes(key);
+            const isSpecial = ["⇧", "⎇", "⌫", "⏎", "↹", "⇪", "␣"].includes(key);
             const isPressed = activeKey === key;
-
+            const isToggled =
+              (["shift", "⇧", "⬆"].includes(key.toLowerCase()) && shiftActive) ||
+              (["alt", "⎇"].includes(key.toLowerCase()) && altActive);
+  
             return (
               <button
-                key={`${key}-${rowIndex}`}
-                onMouseDown={() => handleKeyPress(key)}
-                onMouseUp={() => handleKeyRelease(key)}
+                key={`${key}-${keyIndex}`}
+                onMouseDown={() => !isMobile && handleKeyPress(key)}
+                onMouseUp={() => !isMobile && handleKeyRelease(key)}
                 onTouchStart={(e) => {
                   e.preventDefault();
                   handleKeyPress(key);
@@ -161,14 +217,18 @@ const VirtualKeyboard = ({ onKeyPress }) => {
                   handleKeyRelease(key);
                 }}
                 className={`${baseKeyClasses} ${
-                  isPressed ? pressedKeyStyle : ""
-                } ${isSpecial ? specialKeyStyle : defaultKeyStyle}`}
+                  isPressed
+                    ? pressedKeyStyle
+                    : isToggled && isMobile
+                    ? toggledKeyStyle
+                    : isSpecial
+                    ? specialKeyStyle
+                    : defaultKeyStyle
+                }`}
                 style={{
-                  width: getKeyWidth(key, row),
-                  marginLeft: keyIndex === 0 ? 0 : isMobile ? "0.5rem" : "1rem",
-                  flexShrink: 0,
-                  flexGrow: 0,
+                  gridColumn: getColumnSpan(key),
                 }}
+                tabIndex={-1}
               >
                 {getDisplayChar(key)}
               </button>
