@@ -184,7 +184,7 @@ const GameArea = ({ settings, onFinish }) => {
       {/* Stats Section */}
       <div className="flex sm:flex-row justify-between items-center mb-8 border px-4 py-3 rounded shadow-sm border-gray-200 text-sm sm:text-base md:text-lg lg:text-xl">
         <p className="text-[var(--text-color)]">
-          وقت بچيل: {settings.mode === "practice" ? "∞" : `${timeLeft}s`}
+        بچيل وقت : {settings.mode === "practice" ? "∞" : `${timeLeft}s`}
         </p>
         <p className="text-[var(--text-color)]">
           WPM:{" "}

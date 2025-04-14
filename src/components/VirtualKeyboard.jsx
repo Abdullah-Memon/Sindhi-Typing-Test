@@ -190,7 +190,7 @@ const VirtualKeyboard = ({ onKeyPress }) => {
   };
 
   return (
-    <div className="absolute bottom-0 right-0 left-0 p-4 w-dvw flex flex-col items-center mx-auto mt-4 bg-gray-100 py-4 rounded-lg shadow-md">
+    <div className="absolute bottom-0 right-0 left-0 p-4 md:max-w-6xl flex flex-col items-center mx-auto mt-4 bg-gray-50 py-4">
       {keyboardLayout.map((row, rowIndex) => (
         <div
           key={rowIndex}

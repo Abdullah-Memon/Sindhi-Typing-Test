@@ -7,6 +7,7 @@ import { ThemeProvider } from "../components/ThemeProvider";
 import GameArea from "../components/GameArea2";
 import VirtualKeyboard from "../components/VirtualKeyboard";
 import Prerequisite from "../components/Prerequisite";
+import Footer from "../components/Footer";
 
 const DEFAULT_SETTINGS = {
   timer: 60,
@@ -62,6 +63,8 @@ const IndexPage = () => {
           />
         )}
       </div>
+
+      <Footer/>
     </ThemeProvider>
   );
 };
