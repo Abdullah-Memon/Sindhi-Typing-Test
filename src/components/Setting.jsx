@@ -163,6 +163,7 @@ const Setting = ({ onUpdateSettings }) => {
       <button
         className="rounded-lg outline-none text-[var(--text-primary-color)] hover:rotate-18 transition-transform duration-300 cursor-pointer"
         onClick={handleSettingClick}
+        title={'settings'}
       >
         {/* <img src={SettingIcon} alt="Settings" className="h-6 text-red-400" /> */}
         <svg
@@ -188,9 +189,9 @@ const Setting = ({ onUpdateSettings }) => {
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
           <div
             ref={panelRef}
-            className="bg-white p-6 rounded-xl shadow-2xl max-w-md w-full mx-4"
+            className="bg-[var(--keyboard-key)] border border-[var(--text-color)] p-6 rounded-xl shadow-2xl max-w-md w-full mx-4"
           >
-            <h2 className="text-xl font-bold text-[var(--primary-color)] mb-4 text-right border-b-1 border-b-gray-300">
+            <h2 className="text-xl font-bold text-[var(--text-primary-color)] mb-4 text-right border-b-1 border-b-gray-300">
               سيٽنگ
             </h2>
             <div className="space-y-4">
@@ -231,7 +232,7 @@ const Setting = ({ onUpdateSettings }) => {
 
               {/* Font Size Slider */}
               <div>
-                <label className="block text-[var(--primary-color)] mb-1 text-right">
+                <label className="block text-[var(--text-primary-color)] mb-1 text-right">
                   : فونٽ سائيز
                 </label>
                 <input
@@ -279,7 +280,7 @@ const Setting = ({ onUpdateSettings }) => {
               </button>
               <button
                 onClick={handleCancel}
-                className="px-4 py-1 border border-[var(--primary-color)] text-[var(--primary-color)] rounded transition cursor-pointer"
+                className="px-4 py-1 border border-[var(--text-primary-color)] text-[var(--text-primary-color)] rounded transition cursor-pointer"
               >
                 رد ڪريو
               </button>
@@ -300,17 +301,17 @@ const SettingDropdown = ({
   disabled = false,
 }) => (
   <div>
-    <label className="block text-[var(--primary-color)] mb-1 text-right">
+    <label className="block text-[var(--text-primary-color)] mb-1 text-right">
       :{label}
     </label>
     <select
-      className="w-full text-right p-2 bg-gray-50 text-[var(--primary-color)] rounded border border-gray-600 disabled:opacity-50"
+      className="w-full text-right p-2 bg-gray-50 text-[var(--text-color)] rounded border border-gray-600 disabled:opacity-50 cursor-pointer"
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
     >
       {options.map((opt) => (
-        <option key={opt.value} value={opt.value}>
+        <option key={opt.value} value={opt.value} className="cursor-pointer">
           {opt.label}
         </option>
       ))}
@@ -321,7 +322,7 @@ const SettingDropdown = ({
 // Toggle
 const ToggleOption = ({ label, value, onChange }) => (
   <div className="flex items-center flex-row-reverse justify-between">
-    <span className="text-[var(--primary-color)]">{label}</span>
+    <span className="text-[var(--text-primary-color)]">{label}</span>
     <label className="inline-flex items-center cursor-pointer relative">
       <input
         type="checkbox"

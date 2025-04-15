@@ -176,10 +176,11 @@ const GameArea = ({ settings, onFinish }) => {
   const cursorColor = isCorrect ? "var(--text-primary-color)" : "#ef4444"; // Green or red
 
   return (
+    <div className={`flex flex-col justify-between gap-4 h-[70dvh]`}>
     <div
       ref={containerRef}
       dir="rtl"
-      className="focus:outline-none text-right overflow-hidden px-4 sm:px-6 md:px-8 pt-0"
+      className="focus:outline-none text-right overflow-hidden pt-0 "
     >
       {/* Stats Section */}
       <div className="flex sm:flex-row justify-between items-center mb-8 border px-4 py-3 rounded shadow-sm border-gray-200 text-sm sm:text-base md:text-lg lg:text-xl">
@@ -304,6 +305,7 @@ const GameArea = ({ settings, onFinish }) => {
         />
       )}
 
+    </div>
       {settings.showKeyboard && (
         <VirtualKeyboard onKeyPress={handleKeyPress} settings={settings} />
       )}

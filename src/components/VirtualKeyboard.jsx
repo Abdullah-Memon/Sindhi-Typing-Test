@@ -149,12 +149,12 @@ const VirtualKeyboard = ({ onKeyPress }) => {
   const baseKeyClasses = `rounded flex justify-center items-center shadow select-none transition-all duration-150 ${
     isMobile ? "text-xs p-1 min-h-[2rem]" : "text-sm p-2 min-h-[2.5rem]"
   }`;
-  const specialKeyStyle = `bg-[var(--primary-color)] text-white font-semibold ${shiftActive && 'bg-white text-[var(--primary-color)]'}`;
-  const defaultKeyStyle = "bg-white text-gray-900 hover    -gray-200";
+  const specialKeyStyle = `bg-[var(--primary-color)] text-white font-semibold'}`;
+  const defaultKeyStyle = "bg-[var(--keyboard-key)] text-[var(--text-color)] ";
   const pressedKeyStyle = "shadow-md scale-95";
   const toggledKeyStyle = "bg-[var(--primary-color)] text-white";
   const rowClass = (rowIndex) =>
-    `grid grid-cols-13 m-0.5 w-full max-w-3xl ${
+    `grid grid-cols-13 m-0.5 w-full max-w-7xl min-h-xl ${
       isMobile ? "gap-0.5" : "gap-1"
     } ${rowIndex === keyboardLayout.length - 1 ? "" : "justify-center"}`;
   
@@ -190,11 +190,11 @@ const VirtualKeyboard = ({ onKeyPress }) => {
   };
 
   return (
-    <div className="absolute bottom-0 right-0 left-0 p-4 md:max-w-6xl flex flex-col items-center mx-auto mt-4 bg-gray-50 py-4">
+    <div className="p-4 w-full md:w-5xl bg-[var(--background-color)] flex flex-col items-center mx-auto mt-4 py-4 transition-all duration-300 ease-in-out">
       {keyboardLayout.map((row, rowIndex) => (
         <div
           key={rowIndex}
-          className={rowClass(rowIndex)}
+          className={rowClass(rowIndex) + ''}
         >
           {row.map((key, keyIndex) => {
             const isSpecial = ["⇧", "⎇", "⌫", "⏎", "↹", "⇪", "␣"].includes(key);

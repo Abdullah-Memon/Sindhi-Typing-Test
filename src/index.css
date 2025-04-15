@@ -14,18 +14,22 @@
   --background-color: #ffffff;
   --text-color: #545454;
   --white-color: #ffffff;
+  --keyboard-key: #F8F9FA
 }
 
 [data-theme="dark"] {
   --background-color: #181818;
   --text-color: #d9d9d9;
   --text-primary-color: #ffffff;
+  /* --keyboard-key: '#29292B' */
+  --keyboard-key: #000000;
 }
 
 body {
   background-color: var(--background-color);
   color: var(--text-color);
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.2s, color 0.2s ease-in-out;
+
   font-family: "Ambile", sans-serif;
 }
 
